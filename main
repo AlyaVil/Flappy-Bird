@@ -1,0 +1,66 @@
+ArrayList<Column> columns = new ArrayList();
+float h = 1;//ускорение свободного падения
+Bird player;
+float score;
+int highscore;
+PImage Bird_image;
+PImage Column_image;
+JSONObject json;
+
+void setup(){
+size(displayWidth , displayHeight, P2D);
+imageMode(CENTER);
+//textAlign(CENTER);
+Bird_image = loadImage("bird.png");
+Column_image = loadImage("column.png");
+player = new Bird(80,200);
+
+try{
+json = loadJSONObject("data.json");
+highscore = json.getInt("highscore");
+}catch(Exception e){
+json = new JSONObject();
+json.setInt("highscore",0);
+saveJSONObject(json, "data.json");
+}
+}
+
+void draw(){
+background(0,140,255);
+scale(width/278.0,height/500.0);
+
+//create new columns
+if(frameCount%60==0){
+float Height = random(100,400);
+columns.add(new Column(300,0,Height));
+columns.add(new Column(300,Height+150,500-(Height+150)));
+}
+
+player.update();
+if(player.y>700) restart();
+
+for(int i=columns.size()-1; i>=0; i--){
+columns.get(i).update();
+
+if(columns.get(i).is_colision(player)){
+restart();
+break;
+}
+
+if(columns.get(i).x<-columns.get(i).size){
+columns.remove(i);
+score += 0.5;
+if(score>highscore){
+json.setInt("highscore",int(score));
+saveJSONObject(json,"data.json");
+highscore = int(score);
+}
+}
+}
+
+fill(255);
+textSize(25);
+text("Score : "+int(score),0,40);
+text("Highscore : " + int(highscore),0,80);
+
+}

@@ -64,3 +64,72 @@ text("Score : "+int(score),0,40);
 text("Highscore : " + int(highscore),0,80);
 
 }
+void restart(){
+columns.clear();
+player = new Bird(80,200);
+score = 0;
+}
+
+class Bird{
+
+float x, y, vx = 3, vy, angle;
+int size = 40;
+
+Bird(float x, float y){
+this.x = x;
+this.y = y;
+}
+
+void update(){
+draw();
+
+y += vy;
+vy += h;
+angle += vy/35;
+
+if(keyPressed){
+vy = -10*h;
+}
+}
+
+void draw(){
+pushMatrix();
+translate(x,y);
+rotate(angle);
+image(Bird_image,0,0,size*1.3,size*1.3);
+popMatrix();
+}
+}
+
+class Column{
+
+float x, y, Height;
+int size = 35;
+
+Column(float x, float y, float Height){
+this.x = x;
+this.y = y;
+this.Height = Height;
+}
+
+void update(){
+draw();
+
+x -= player.vx;
+}
+
+void draw(){
+stroke(0,80,0);
+strokeWeight(3);
+fill(0,170,0);
+rect(x,y,size,Height);
+}
+
+boolean is_colision(Bird bird){
+if(bird.x+bird.size/2>x&&bird.x-bird.size/2<x+size&&bird.y+bird.size/2>y&&bird.y-bird.size/2<y+Height){
+return true;
+}else{
+return false;
+}
+}
+}
